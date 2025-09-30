@@ -1,4 +1,3 @@
-# D:\workspace\tools\git-sync\git_sync.py
 import subprocess
 import sys
 import os
@@ -15,8 +14,9 @@ def run_command(command, capture=True):
             encoding='utf-8'
         )
         if capture:
-            # Chỉ in output/error nếu không phải lệnh lấy tên branch
-            if "git branch --show-current" not in " ".join(command):
+            # Chỉ in output/error của các lệnh chính để giữ giao diện sạch
+            is_utility_command = any(util in " ".join(command) for util in ['git branch', 'git status'])
+            if not is_utility_command:
                 if result.stdout:
                     print(result.stdout)
                 if result.stderr:
@@ -54,9 +54,8 @@ def main():
         print("❌ Lỗi: Thư mục này không phải là một kho chứa Git.", file=sys.stderr)
         sys.exit(1)
         
-    # --- KIỂM TRA BRANCH ---
     current_branch = get_current_branch()
-    protected_branches = {'main', 'master', 'develop'} # Các branch cần bảo vệ
+    protected_branches = {'main', 'master', 'develop'}
 
     if current_branch:
         print(f"   Đang làm việc trên branch: [{current_branch}]")
@@ -68,11 +67,10 @@ def main():
                 sys.exit(0)
     else:
         print("   Không thể xác định branch hiện tại, vui lòng kiểm tra lại.", file=sys.stderr)
-    # --- KẾT THÚC ---
-
+    
     return_code, output = run_command(['git', 'status', '--porcelain'])
     if not output.strip():
-        print("✅ Không có thay đổi nào để commit. Mọi thứ đã được đồng bộ.")
+        print("\n✅ Không có thay đổi nào để commit. Mọi thứ đã được đồng bộ.")
         sys.exit(0)
 
     print("\n--- 1. Đang thêm tất cả các thay đổi (git add .) ---")
@@ -80,7 +78,6 @@ def main():
 
     commit_prefix = ""
     commit_message = ""
-    # logic xử lý commit message 
     if args.feat:
         commit_prefix, commit_message = "feat: ", args.feat
     elif args.fix:
@@ -106,16 +103,35 @@ def main():
     
     return_code, _ = run_command(['git', 'commit', '-m', final_commit_message])
     if return_code != 0:
-        print("❌ Lỗi khi thực hiện `git commit`", file=sys.stderr)
         sys.exit(1)
 
     print("\n--- 3. Đang đẩy code lên remote (git push) ---")
-    return_code, output = run_command(['git', 'push'])
-    if return_code != 0:
-        print("❌ Lỗi khi thực hiện `git push`.", file=sys.stderr)
-        if "rejected" in output and "non-fast-forward" in output:
-            print("   Gợi ý: Có vẻ như branch trên remote đã có commit mới. Hãy thử `git pull` trước khi push lại.", file=sys.stderr)
+    push_return_code, push_output = run_command(['git', 'push'])
+    
+    # --- TỰ ĐỘNG PULL KHI CẦN ---
+    if push_return_code != 0:
+        if "rejected" in push_output and "non-fast-forward" in push_output:
+            print("\n   Gợi ý: Có vẻ như branch trên remote đã có commit mới.")
+            pull_confirmation = input("   Bạn có muốn tự động chạy 'git pull --rebase' và thử push lại không? (y/n): ")
+            if pull_confirmation.lower() == 'y':
+                print("\n--- 4. Đang kéo code mới về (git pull --rebase) ---")
+                pull_return_code, _ = run_command(['git', 'pull', '--rebase'])
+                if pull_return_code == 0:
+                    print("\n--- 5. Đang đẩy code lại (git push) ---")
+                    retry_push_code, _ = run_command(['git', 'push'])
+                    if retry_push_code == 0:
+                        print("\n✅ Đồng bộ thành công sau khi cập nhật!")
+                        sys.exit(0)
+                    else:
+                        print("\n❌ Vẫn lỗi sau khi pull. Vui lòng kiểm tra thủ công.", file=sys.stderr)
+                else:
+                    print("\n❌ `git pull --rebase` thất bại. Có thể có xung đột (conflict). Vui lòng giải quyết thủ công.", file=sys.stderr)
+            else:
+                print("👍  Đã hủy. Vui lòng `git pull` thủ công trước khi push.")
+        else:
+            print("❌ Lỗi khi thực hiện `git push`. Vui lòng kiểm tra lại lỗi ở trên.", file=sys.stderr)
         sys.exit(1)
+    # --- KẾT THÚC ---
 
     print("\n✅ Đồng bộ thành công!")
 
