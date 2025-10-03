@@ -1,15 +1,19 @@
 import argparse
 import sys
 
-# Import các hàm khởi tạo và hàm chính từ package 'core'
-from core.config import initialize_lang
+# Import các hàm từ package 'core'
+from core.config import initialize_lang, get_commit_aliases
 from core.main_flow import start_sync_flow, handle_force_reset
 
 def main():
     """Hàm chính của ứng dụng."""
-    # --- Thiết lập Argument Parser ---
     parser = argparse.ArgumentParser(description="A smart Git sync tool.")
     
+    # --- Đọc alias trước để tự động thêm cờ ---
+    aliases = get_commit_aliases()
+    alias_to_target = {alias: target for alias, target in aliases.items()}
+
+    # --- Thiết lập các cờ (flags) ---
     parser.add_argument("--lang", choices=['en', 'vi'], help="Set the display language (en/vi).")
     
     parser.add_argument(
@@ -20,7 +24,7 @@ def main():
     
     parser.add_argument(
         "--stash",
-        action="store_true", # Biến nó thành một cờ, không cần giá trị theo sau
+        action="store_true",
         help="Automatically stash uncommitted changes before syncing and pop them after."
     )
     
@@ -29,7 +33,7 @@ def main():
         metavar="TAG_NAME",
         help="Create and push a tag after a successful sync (e.g., v1.0.0)."
     )
-    
+
     parser.add_argument(
         "--update-after",
         metavar="BRANCH_NAME",
@@ -37,23 +41,36 @@ def main():
     )
 
     commit_group = parser.add_mutually_exclusive_group()
-    commit_group.add_argument("--feat", metavar="MESSAGE", help='Commit with prefix "feat:"')
-    commit_group.add_argument("--fix", metavar="MESSAGE", help='Commit with prefix "fix:"')
-    commit_group.add_argument("--chore", metavar="MESSAGE", help='Commit with prefix "chore:"')
-    commit_group.add_argument("--refactor", metavar="MESSAGE", help='Commit with prefix "refactor:"')
-    commit_group.add_argument("--docs", metavar="MESSAGE", help='Commit with prefix "docs:"')
-    commit_group.add_argument("--style", metavar="MESSAGE", help='Commit with prefix "style:"')
+    # Các loại commit chuẩn
+    standard_commits = ["feat", "fix", "chore", "refactor", "docs", "style", "perf", "test"]
+    for commit_type in standard_commits:
+        commit_group.add_argument(f"--{commit_type}", metavar="MESSAGE", help=f'Commit with prefix "{commit_type}:"')
     
+    # Tự động thêm các cờ alias vào parser
+    for alias, target in alias_to_target.items():
+        if alias not in standard_commits: # Tránh thêm lại các cờ đã có
+            commit_group.add_argument(
+                f"--{alias}",
+                metavar="MESSAGE",
+                help=f'Alias for "{target}:"'
+            )
+
     args = parser.parse_args()
 
-    # --- Khởi tạo các cài đặt (ngôn ngữ) ---
+    # --- Chuyển đổi giá trị từ alias sang cờ chuẩn ---
+    for alias, target in alias_to_target.items():
+        alias_value = getattr(args, alias, None)
+        if alias_value:
+            setattr(args, target, alias_value)
+            break
+
+    # --- Khởi tạo và chạy ứng dụng ---
     try:
         initialize_lang(args)
     except Exception as e:
         print(f"Failed to initialize settings: {e}", file=sys.stderr)
         sys.exit(1)
 
-    # --- Chạy luồng logic chính ---
     if args.force_reset_to:
         handle_force_reset(args.force_reset_to)
     else:

@@ -202,5 +202,13 @@
     "update_branch_success": {
         "en": "✅ Branch '{branch}' is now up-to-date.",
         "vi": "✅ Branch '{branch}' đã được cập nhật."
+    },
+    "review_changes_header": {
+        "en": "\n--- 🔍 Review Changes Before Committing ---",
+        "vi": "\n--- 🔍 Xem Lại Các Thay Đổi Trước Khi Commit ---"
+    },
+    "commit_confirm_prompt": {
+        "en": "\n   Do you want to proceed with this commit? (Y/n): ",
+        "vi": "\n   Bạn có muốn tiếp tục với commit này không? (Y/n): "
     }
 }

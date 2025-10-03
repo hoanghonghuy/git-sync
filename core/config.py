@@ -65,3 +65,11 @@ def _load_user_config():
     home_config_path = Path.home() / '.gitsyncrc'
     config.read([home_config_path, project_config_path])
     return config
+
+def get_commit_aliases():
+    """Đọc các bí danh của loại commit từ file .gitsyncrc."""
+    config = _load_user_config()
+    if config.has_section('commit_aliases'):
+        # Trả về một dictionary, ví dụ: {'ref': 'refactor', 'test': 'test'}
+        return {alias: target for alias, target in config.items('commit_aliases')}
+    return {}

@@ -23,12 +23,18 @@ def handle_branch_protection():
 def get_commit_message(args):
     """Lấy commit message từ args hoặc từ input của người dùng."""
     commit_message, commit_prefix = "", ""
-    if args.feat: commit_prefix, commit_message = "feat: ", args.feat
-    elif args.fix: commit_prefix, commit_message = "fix: ", args.fix
-    elif args.chore: commit_prefix, commit_message = "chore: ", args.chore
-    elif args.refactor: commit_prefix, commit_message = "refactor: ", args.refactor
-    elif args.docs: commit_prefix, commit_message = "docs: ", args.docs
-    elif args.style: commit_prefix, commit_message = "style: ", args.style
+    # Danh sách các loại commit chuẩn
+    commit_types = ["feat", "fix", "chore", "refactor", "docs", "style", "perf", "test"]
+    
+    used_commit_type = None
+    for c_type in commit_types:
+        if getattr(args, c_type, None):
+            used_commit_type = c_type
+            break
+
+    if used_commit_type:
+        commit_prefix = f"{used_commit_type}: "
+        commit_message = getattr(args, used_commit_type)
     else:
         print(t('preparing_commit'))
         commit_message = input(t('commit_prompt'))
@@ -47,6 +53,15 @@ def execute_sync(commit_message, args):
     run_command(['git', 'add', '.'])
 
     print(t('committing_with_message', message=commit_message))
+    
+    print(t('review_changes_header'))
+    run_command(['git', 'diff', '--stat', 'HEAD'])
+    
+    confirmation = input(t('commit_confirm_prompt'))
+    if confirmation.lower() not in ['y', 'yes', '']:
+        print(t('process_cancelled'))
+        sys.exit(0)
+
     return_code, _ = run_command(['git', 'commit', '-m', commit_message])
     if return_code != 0:
         sys.exit(1)
@@ -108,7 +123,7 @@ def start_sync_flow(args):
     
     _, output = run_command(['git', 'status', '--porcelain'])
     if not output.strip() and was_stashed:
-        print("\n✅ No changes to commit, proceeding to pull updates.")
+        print(t('no_changes_to_commit_proceed_pull'))
         run_command(['git', 'pull', '--rebase'])
         if args.update_after:
             _update_target_branch(args.update_after, original_branch)
@@ -179,7 +194,6 @@ def _run_post_sync_tasks(args, original_branch):
 
 def _update_target_branch(target_branch, original_branch):
     """Hàm nội bộ để checkout, pull một branch khác rồi quay lại."""
-    # Đảm bảo không cố update chính branch hiện tại
     if target_branch == original_branch:
         return
 
@@ -189,7 +203,7 @@ def _update_target_branch(target_branch, original_branch):
     checkout_code, _ = run_command(['git', 'checkout', target_branch])
     if checkout_code != 0:
         print(t('update_branch_failed', branch=target_branch), file=sys.stderr)
-        run_command(['git', 'checkout', original_branch]) # Cố gắng quay lại
+        run_command(['git', 'checkout', original_branch])
         return
 
     print(t('pulling_latest_for_branch', branch=target_branch))
