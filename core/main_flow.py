@@ -39,8 +39,8 @@ def get_commit_message(args):
     
     return f"{commit_prefix}{commit_message}"
 
-def execute_sync(commit_message):
-    """Thực hiện chuỗi lệnh add, commit, push và xử lý lỗi."""
+def execute_sync(commit_message, args):
+    """Thực hiện chuỗi lệnh add, commit, push và tạo tag nếu có."""
     print(t('adding_files'))
     run_command(['git', 'add', '.'])
 
@@ -54,6 +54,18 @@ def execute_sync(commit_message):
     
     if push_return_code == 0:
         print(t('sync_success'))
+        if args.tag:
+            tag_name = args.tag
+            print(t('creating_tag', tag=tag_name))
+            run_command(['git', 'tag', tag_name])
+            
+            print(t('pushing_tag', tag=tag_name))
+            tag_push_code, _ = run_command(['git', 'push', 'origin', tag_name])
+            
+            if tag_push_code == 0:
+                print(t('tag_pushed_successfully', tag=tag_name))
+            else:
+                print(t('tag_push_failed', tag=tag_name), file=sys.stderr)
         return
 
     if "rejected" in push_output and "non-fast-forward" in push_output:
@@ -67,6 +79,17 @@ def execute_sync(commit_message):
                 retry_push_code, _ = run_command(['git', 'push'])
                 if retry_push_code == 0:
                     print(t('sync_after_update_success'))
+                    # Sau khi push lại thành công cũng cần kiểm tra tag
+                    if args.tag:
+                        tag_name = args.tag
+                        print(t('creating_tag', tag=tag_name))
+                        run_command(['git', 'tag', tag_name])
+                        print(t('pushing_tag', tag=tag_name))
+                        tag_push_code, _ = run_command(['git', 'push', 'origin', tag_name])
+                        if tag_push_code == 0:
+                            print(t('tag_pushed_successfully', tag=tag_name))
+                        else:
+                            print(t('tag_push_failed', tag=tag_name), file=sys.stderr)
                     sys.exit(0)
                 else:
                     print(t('push_after_pull_failed'), file=sys.stderr)
@@ -113,7 +136,7 @@ def start_sync_flow(args):
         final_commit_message = get_commit_message(args)
         if not final_commit_message:
             sys.exit(1)
-        execute_sync(final_commit_message)
+        execute_sync(final_commit_message, args)
 
     if was_stashed:
         print(t('popping_stash'))

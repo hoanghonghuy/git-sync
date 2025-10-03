@@ -23,6 +23,12 @@ def main():
         action="store_true", # Biến nó thành một cờ, không cần giá trị theo sau
         help="Automatically stash uncommitted changes before syncing and pop them after."
     )
+    
+    parser.add_argument(
+        "--tag",
+        metavar="TAG_NAME",
+        help="Create and push a tag after a successful sync (e.g., v1.0.0)."
+    )
 
     commit_group = parser.add_mutually_exclusive_group()
     commit_group.add_argument("--feat", metavar="MESSAGE", help='Commit with prefix "feat:"')

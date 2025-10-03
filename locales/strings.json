@@ -162,5 +162,21 @@
     "stash_pop_conflict": {
         "en": "   ⚠️  Conflict detected while applying stash. Please resolve conflicts manually.",
         "vi": "   ⚠️  Phát hiện xung đột khi áp dụng stash. Vui lòng giải quyết thủ công."
+    },
+    "creating_tag": {
+        "en": "\n--- 🔖 Creating tag '{tag}'... ---",
+        "vi": "\n--- 🔖 Đang tạo tag '{tag}'... ---"
+    },
+    "pushing_tag": {
+        "en": "--- 🚀 Pushing tag '{tag}' to remote... ---",
+        "vi": "--- 🚀 Đang đẩy tag '{tag}' lên remote... ---"
+    },
+    "tag_pushed_successfully": {
+        "en": "   Tag '{tag}' created and pushed successfully.",
+        "vi": "   Tag '{tag}' đã được tạo và đẩy lên thành công."
+    },
+    "tag_push_failed": {
+        "en": "   ❌ Failed to push tag '{tag}'. Please do it manually.",
+        "vi": "   ❌ Đẩy tag '{tag}' thất bại. Vui lòng thực hiện thủ công."
     }
 }
