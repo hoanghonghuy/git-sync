@@ -1,0 +1,98 @@
+{
+    "start_sync": {
+        "en": "🚀 Starting Git sync process...",
+        "vi": "🚀 Bắt đầu quy trình đồng bộ Git..."
+    },
+    "not_a_repo": {
+        "en": "❌ Error: This directory is not a Git repository. Please run `git init` first.",
+        "vi": "❌ Lỗi: Thư mục này không phải là một kho chứa Git. Vui lòng chạy `git init` trước."
+    },
+    "working_on_branch": {
+        "en": "   Working on branch: [{branch}]",
+        "vi": "   Đang làm việc trên branch: [{branch}]"
+    },
+    "branch_warning": {
+        "en": "\n⚠️  WARNING: You are about to commit directly to the '{branch}' branch.",
+        "vi": "\n⚠️  CẢNH BÁO: Bạn sắp commit trực tiếp vào branch '{branch}'."
+    },
+    "confirm_prompt": {
+        "en": "   This action is not recommended. Are you sure you want to continue? (y/n): ",
+        "vi": "   Hành động này không được khuyến khích. Bạn có chắc chắn muốn tiếp tục? (y/n): "
+    },
+    "process_cancelled": {
+        "en": "👍  Process cancelled. Safety first!",
+        "vi": "👍  Đã hủy quy trình. An toàn là trên hết!"
+    },
+    "cannot_determine_branch": {
+        "en": "   Could not determine the current branch, please check.",
+        "vi": "   Không thể xác định branch hiện tại, vui lòng kiểm tra lại."
+    },
+    "no_changes": {
+        "en": "\n✅ No changes to commit. Everything is up to date.",
+        "vi": "\n✅ Không có thay đổi nào để commit. Mọi thứ đã được đồng bộ."
+    },
+    "adding_files": {
+        "en": "\n--- 1. Adding all changes (git add .) ---",
+        "vi": "\n--- 1. Đang thêm tất cả các thay đổi (git add .) ---"
+    },
+    "preparing_commit": {
+        "en": "\n--- 2. Preparing commit ---",
+        "vi": "\n--- 2. Chuẩn bị commit ---"
+    },
+    "commit_prompt": {
+        "en": "   Enter your commit message: ",
+        "vi": "   Nhập vào commit message của bạn: "
+    },
+    "empty_commit_message": {
+        "en": "❌ Commit message cannot be empty. Aborted.",
+        "vi": "❌ Commit message không được để trống. Đã hủy."
+    },
+    "committing_with_message": {
+        "en": "   Committing with message: \"{message}\"",
+        "vi": "   Chuẩn bị commit với message: \"{message}\""
+    },
+    "pushing_to_remote": {
+        "en": "\n--- 3. Pushing to remote (git push) ---",
+        "vi": "\n--- 3. Đang đẩy code lên remote (git push) ---"
+    },
+    "push_failed": {
+        "en": "❌ Error executing `git push`.",
+        "vi": "❌ Lỗi khi thực hiện `git push`."
+    },
+    "non_fast_forward_hint": {
+        "en": "\n   Hint: It seems the remote branch has new commits.",
+        "vi": "\n   Gợi ý: Có vẻ như branch trên remote đã có commit mới."
+    },
+    "pull_prompt": {
+        "en": "   Do you want to automatically run 'git pull --rebase' and try again? (y/n): ",
+        "vi": "   Bạn có muốn tự động chạy 'git pull --rebase' và thử push lại không? (y/n): "
+    },
+    "pulling_code": {
+        "en": "\n--- 4. Pulling new changes (git pull --rebase) ---",
+        "vi": "\n--- 4. Đang kéo code mới về (git pull --rebase) ---"
+    },
+    "retrying_push": {
+        "en": "\n--- 5. Retrying push (git push) ---",
+        "vi": "\n--- 5. Đang đẩy code lại (git push) ---"
+    },
+    "sync_after_update_success": {
+        "en": "\n✅ Sync successful after update!",
+        "vi": "\n✅ Đồng bộ thành công sau khi cập nhật!"
+    },
+    "pull_failed": {
+        "en": "\n❌ `git pull --rebase` failed. There might be conflicts. Please resolve them manually.",
+        "vi": "\n❌ `git pull --rebase` thất bại. Có thể có xung đột (conflict). Vui lòng giải quyết thủ công."
+    },
+    "push_after_pull_failed": {
+        "en": "\n❌ Push still failed after pulling. Please check manually.",
+        "vi": "\n❌ Vẫn lỗi sau khi pull. Vui lòng kiểm tra thủ công."
+    },
+    "pull_cancelled": {
+        "en": "👍  Cancelled. Please run `git pull` manually before pushing again.",
+        "vi": "👍  Đã hủy. Vui lòng `git pull` thủ công trước khi push."
+    },
+    "sync_success": {
+        "en": "\n✅ Sync successful!",
+        "vi": "\n✅ Đồng bộ thành công!"
+    }
+}
