@@ -100,3 +100,33 @@ def start_sync_flow(args):
         sys.exit(1)
 
     execute_sync(final_commit_message)
+    
+# --- HÀM TÍNH NĂNG RESET ---
+def handle_force_reset(branch_to_reset):
+    """Thực hiện reset branch local một cách an toàn."""
+    print("\n" + "="*60)
+    print(t('force_reset_warning_header'))
+    print(t('force_reset_warning_line1'))
+    print(t('force_reset_warning_line2', branch=branch_to_reset))
+    print(t('force_reset_warning_line3'))
+    print("="*60)
+    
+    prompt = t('force_reset_prompt', branch=branch_to_reset)
+    confirmation = input(prompt)
+
+    if confirmation.strip() == branch_to_reset:
+        print(f"\n✅ {t('force_reset_confirmed')}")
+        
+        print(f"\n--- 1. {t('force_reset_step1')} ---")
+        run_command(['git', 'fetch', '--all'])
+        
+        print(f"\n--- 2. {t('force_reset_step2', branch=branch_to_reset)} ---")
+        run_command(['git', 'reset', '--hard', branch_to_reset])
+        
+        print(f"\n--- 3. {t('force_reset_step3')} ---")
+        run_command(['git', 'clean', '-df'])
+        
+        print(f"\n✅ {t('force_reset_success', branch=branch_to_reset)}")
+    else:
+        print(f"\n❌ {t('force_reset_cancelled')}")
+        sys.exit(0)

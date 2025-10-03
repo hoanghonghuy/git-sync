@@ -94,5 +94,49 @@
     "sync_success": {
         "en": "\n✅ Sync successful!",
         "vi": "\n✅ Đồng bộ thành công!"
+    },
+    "force_reset_warning_header": {
+        "en": "⚠️  EXTREME DANGER WARNING ⚠️",
+        "vi": "⚠️  CẢNH BÁO CỰC KỲ NGUY HIỂM ⚠️"
+    },
+    "force_reset_warning_line1": {
+        "en": "   You are about to DELETE all local changes (uncommitted & untracked).",
+        "vi": "   Bạn sắp XÓA SẠCH mọi thay đổi local (uncommitted & untracked)."
+    },
+    "force_reset_warning_line2": {
+        "en": "   The current branch will be hard reset to match '{branch}'.",
+        "vi": "   Branch hiện tại sẽ bị reset cứng để GIỐNG HỆT '{branch}'."
+    },
+    "force_reset_warning_line3": {
+        "en": "   THIS ACTION CANNOT BE UNDONE.",
+        "vi": "   HÀNH ĐỘNG NÀY KHÔNG THỂ HOÀN TÁC."
+    },
+    "force_reset_prompt": {
+        "en": "   To confirm, please type the exact branch name '{branch}': ",
+        "vi": "   Để xác nhận, vui lòng gõ lại chính xác tên branch '{branch}': "
+    },
+    "force_reset_confirmed": {
+        "en": "Confirmation successful. Starting the force reset process...",
+        "vi": "Xác nhận thành công. Bắt đầu quá trình đồng bộ tuyệt đối..."
+    },
+    "force_reset_step1": {
+        "en": "Fetching all updates from remote",
+        "vi": "Tải về tất cả các cập nhật từ remote"
+    },
+    "force_reset_step2": {
+        "en": "Hard resetting to '{branch}'",
+        "vi": "Thực hiện reset cứng về '{branch}'"
+    },
+    "force_reset_step3": {
+        "en": "Cleaning untracked files and directories",
+        "vi": "Dọn dẹp các file và thư mục chưa được theo dõi"
+    },
+    "force_reset_success": {
+        "en": "Done! Your branch is now identical to '{branch}'.",
+        "vi": "Hoàn tất! Branch của bạn bây giờ đã giống hệt '{branch}'."
+    },
+    "force_reset_cancelled": {
+        "en": "Confirmation did not match. Action cancelled for safety.",
+        "vi": "Xác nhận không khớp. Đã hủy thao tác để đảm bảo an toàn."
     }
 }
