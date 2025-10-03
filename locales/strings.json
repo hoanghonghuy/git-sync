@@ -138,5 +138,29 @@
     "force_reset_cancelled": {
         "en": "Confirmation did not match. Action cancelled for safety.",
         "vi": "Xác nhận không khớp. Đã hủy thao tác để đảm bảo an toàn."
+    },
+    "stashing_changes": {
+        "en": "\n--- ⬆️  Stashing local changes... ---",
+        "vi": "\n--- ⬆️  Đang cất các thay đổi local (stash)... ---"
+    },
+    "no_changes_to_stash": {
+        "en": "   No local changes to stash. Continuing...",
+        "vi": "   Không có thay đổi nào để cất. Tiếp tục..."
+    },
+    "stashed_successfully": {
+        "en": "   Local changes have been stashed.",
+        "vi": "   Các thay đổi đã được cất thành công."
+    },
+    "popping_stash": {
+        "en": "\n--- ⬇️  Applying stashed changes... ---",
+        "vi": "\n--- ⬇️  Đang áp dụng lại các thay đổi đã cất (stash pop)... ---"
+    },
+    "stash_pop_success": {
+        "en": "   Stashed changes applied successfully.",
+        "vi": "   Áp dụng thay đổi đã cất thành công."
+    },
+    "stash_pop_conflict": {
+        "en": "   ⚠️  Conflict detected while applying stash. Please resolve conflicts manually.",
+        "vi": "   ⚠️  Phát hiện xung đột khi áp dụng stash. Vui lòng giải quyết thủ công."
     }
 }
