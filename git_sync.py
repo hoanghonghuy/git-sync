@@ -29,6 +29,12 @@ def main():
         metavar="TAG_NAME",
         help="Create and push a tag after a successful sync (e.g., v1.0.0)."
     )
+    
+    parser.add_argument(
+        "--update-after",
+        metavar="BRANCH_NAME",
+        help="After a successful sync, switch to this branch, pull, and switch back."
+    )
 
     commit_group = parser.add_mutually_exclusive_group()
     commit_group.add_argument("--feat", metavar="MESSAGE", help='Commit with prefix "feat:"')

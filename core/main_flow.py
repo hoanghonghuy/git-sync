@@ -40,7 +40,9 @@ def get_commit_message(args):
     return f"{commit_prefix}{commit_message}"
 
 def execute_sync(commit_message, args):
-    """Thực hiện chuỗi lệnh add, commit, push và tạo tag nếu có."""
+    """Thực hiện chuỗi lệnh add, commit, push và các tác vụ sau đồng bộ."""
+    original_branch = get_current_branch()
+    
     print(t('adding_files'))
     run_command(['git', 'add', '.'])
 
@@ -54,18 +56,7 @@ def execute_sync(commit_message, args):
     
     if push_return_code == 0:
         print(t('sync_success'))
-        if args.tag:
-            tag_name = args.tag
-            print(t('creating_tag', tag=tag_name))
-            run_command(['git', 'tag', tag_name])
-            
-            print(t('pushing_tag', tag=tag_name))
-            tag_push_code, _ = run_command(['git', 'push', 'origin', tag_name])
-            
-            if tag_push_code == 0:
-                print(t('tag_pushed_successfully', tag=tag_name))
-            else:
-                print(t('tag_push_failed', tag=tag_name), file=sys.stderr)
+        _run_post_sync_tasks(args, original_branch)
         return
 
     if "rejected" in push_output and "non-fast-forward" in push_output:
@@ -79,17 +70,7 @@ def execute_sync(commit_message, args):
                 retry_push_code, _ = run_command(['git', 'push'])
                 if retry_push_code == 0:
                     print(t('sync_after_update_success'))
-                    # Sau khi push lại thành công cũng cần kiểm tra tag
-                    if args.tag:
-                        tag_name = args.tag
-                        print(t('creating_tag', tag=tag_name))
-                        run_command(['git', 'tag', tag_name])
-                        print(t('pushing_tag', tag=tag_name))
-                        tag_push_code, _ = run_command(['git', 'push', 'origin', tag_name])
-                        if tag_push_code == 0:
-                            print(t('tag_pushed_successfully', tag=tag_name))
-                        else:
-                            print(t('tag_push_failed', tag=tag_name), file=sys.stderr)
+                    _run_post_sync_tasks(args, original_branch)
                     sys.exit(0)
                 else:
                     print(t('push_after_pull_failed'), file=sys.stderr)
@@ -104,6 +85,7 @@ def execute_sync(commit_message, args):
 
 def start_sync_flow(args):
     """Hàm chính điều phối toàn bộ luồng đồng bộ."""
+    original_branch = get_current_branch()
     was_stashed = False
 
     if args.stash:
@@ -128,6 +110,8 @@ def start_sync_flow(args):
     if not output.strip() and was_stashed:
         print("\n✅ No changes to commit, proceeding to pull updates.")
         run_command(['git', 'pull', '--rebase'])
+        if args.update_after:
+            _update_target_branch(args.update_after, original_branch)
     elif not output.strip():
         print(t('no_changes'))
         if not was_stashed:
@@ -174,3 +158,43 @@ def handle_force_reset(branch_to_reset):
     else:
         print(f"\n❌ {t('force_reset_cancelled')}")
         sys.exit(0)
+
+def _run_post_sync_tasks(args, original_branch):
+    """Chạy các tác vụ sau khi push thành công, như tạo tag hoặc cập nhật branch."""
+    if args.tag:
+        tag_name = args.tag
+        print(t('creating_tag', tag=tag_name))
+        run_command(['git', 'tag', tag_name])
+        
+        print(t('pushing_tag', tag=tag_name))
+        tag_push_code, _ = run_command(['git', 'push', 'origin', tag_name])
+        
+        if tag_push_code == 0:
+            print(t('tag_pushed_successfully', tag=tag_name))
+        else:
+            print(t('tag_push_failed', tag=tag_name), file=sys.stderr)
+
+    if args.update_after:
+        _update_target_branch(args.update_after, original_branch)
+
+def _update_target_branch(target_branch, original_branch):
+    """Hàm nội bộ để checkout, pull một branch khác rồi quay lại."""
+    # Đảm bảo không cố update chính branch hiện tại
+    if target_branch == original_branch:
+        return
+
+    print(t('updating_other_branch_header'))
+    
+    print(t('switching_to_branch', branch=target_branch))
+    checkout_code, _ = run_command(['git', 'checkout', target_branch])
+    if checkout_code != 0:
+        print(t('update_branch_failed', branch=target_branch), file=sys.stderr)
+        run_command(['git', 'checkout', original_branch]) # Cố gắng quay lại
+        return
+
+    print(t('pulling_latest_for_branch', branch=target_branch))
+    run_command(['git', 'pull', '--rebase'])
+
+    print(t('returning_to_previous_branch', branch=original_branch))
+    run_command(['git', 'checkout', original_branch])
+    print(t('update_branch_success', branch=target_branch))
