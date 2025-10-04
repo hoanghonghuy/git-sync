@@ -1,0 +1,15 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "git-sync-tool"
+version = "1.0.0"
+description = "A smart, safe, and fast command-line tool to automate your daily git workflow."
+requires-python = ">=3.7"
+dependencies = [
+    "GitPython" 
+]
+
+[project.scripts]
+git-sync = "git_sync:main"
