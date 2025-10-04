@@ -210,5 +210,9 @@
     "commit_confirm_prompt": {
         "en": "\n   Do you want to proceed with this commit? (Y/n): ",
         "vi": "\n   Bạn có muốn tiếp tục với commit này không? (Y/n): "
+    },
+    "set_lang_success": {
+        "en": "✅ Default language has been set to '{lang}'.",
+        "vi": "✅ Ngôn ngữ mặc định đã được đổi thành '{lang}'."
     }
 }

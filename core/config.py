@@ -73,3 +73,24 @@ def get_commit_aliases():
         # Trả về một dictionary, ví dụ: {'ref': 'refactor', 'test': 'test'}
         return {alias: target for alias, target in config.items('commit_aliases')}
     return {}
+
+def set_language_config(lang):
+    """Ghi đè cài đặt ngôn ngữ vào file .gitsyncrc global."""
+    home_config_path = Path.home() / '.gitsyncrc'
+    config = configparser.ConfigParser()
+    
+    # Đọc file config hiện có (nếu có)
+    config.read(home_config_path)
+    
+    # Đảm bảo section [settings] tồn tại
+    if not config.has_section('settings'):
+        config.add_section('settings')
+        
+    # Đặt giá trị ngôn ngữ mới
+    config.set('settings', 'language', lang)
+    
+    # Ghi lại toàn bộ file config
+    with open(home_config_path, 'w', encoding='utf-8') as configfile:
+        config.write(configfile)
+        
+    print(t('set_lang_success', lang=lang.upper()))
