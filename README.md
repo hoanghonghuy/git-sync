@@ -1,80 +1,84 @@
-# ☁️ Git Sync Tool (`git-sync`)
+# Git Sync Tool (`git-sync`)
 
-This is a command-line interface (CLI) tool written in Python that helps automate the daily `add -> commit -> push` workflow in a smart, safe, and fast way.
-
----
-## ✨ Features
-
-*   🚀 **Automation:** Combines the three commands `git add .`, `git commit`, and `git push` into a single command.
-*   💬 **Quick Commits:** Supports flags like `--feat`, `--fix`, `--chore`, etc., to generate commit messages following the [Conventional Commits](https://www.conventionalcommits.org/) standard without manual typing.
-*   🛡️ **Safe:** Automatically detects the current branch and issues a confirmation warning if you are trying to commit directly to protected branches (`main`, `master`, `develop`).
-*   🔄 **Smart Error Handling:** When `git push` fails due to new commits on the remote, the tool will automatically ask if you want to run `git pull --rebase` and try again.
+A smart, safe, and fast command-line tool to automate your daily `add -> commit -> push` workflow. Written in Python, `git-sync` is designed to be highly configurable and extensible to fit your needs.
 
 ---
-## 🛠️ Installation
+## Features
 
-#### **1. Prerequisites:**
-*   **Python** and **Git** must be installed on your machine and added to the PATH environment variable.
+*   **Automation**: Combines `git add .`, `git commit`, and `git push` into a single, intelligent command.
+*   **Conventional Commits**: Use flags like `--feat`, `--fix` to create standardized commit messages effortlessly.
+*   **Branch Protection**: Warns you before committing directly to protected branches like `main` or `develop`.
+*   **Smart Error Handling**: Automatically suggests running `git pull --rebase` on non-fast-forward errors.
+*   **Auto Stash**: Use the `--stash` flag to automatically stash uncommitted changes before syncing and pop them after.
+*   **Quick Tagging**: Add and push a Git tag for your releases with the `--tag` flag.
+*   **Multi-Branch Sync**: Keep your main branches updated with the `--update-after` flag.
+*   **Highly Configurable**: Customize protected branches, commit aliases, and language via a `.gitsyncrc` file.
+*   **Multi-Language**: Supports English and Vietnamese out of the box.
 
-#### **2. Configure as a Global Command (Windows):**
-1.  Create the `D:\workspace\tools` directory (if it doesn't already exist).
-2.  Create a subdirectory `D:\workspace\tools\git-sync`.
-3.  Save the Python script file as `git_sync.py` inside the `git-sync` directory.
-4.  In the `D:\workspace\tools` directory, create a new file named **`git-sync.bat`** with the following content:
+---
+## Installation
+
+1.  **Prerequisites**: Ensure you have **Python** and **Git** installed and accessible in your system's PATH.
+2.  Download the project files and place them in a dedicated directory (e.g., `D:\tools\git-sync`).
+3.  **Create a batch file** (e.g., `git-sync.bat`) in a folder that is in your PATH (e.g., `D:\tools`). The content should be:
     ```batch
     @echo off
-    python "D:\workspace\tools\git-sync\git_sync.py" %*
+    python "D:\tools\git-sync\git_sync.py" %*
     ```
-5.  Ensure that the `D:\workspace\tools` directory has been added to your Windows PATH environment variable.
+    *Replace `D:\tools\git-sync` with the actual path to your project.*
 
 ---
-## 🎮 Usage
+## Configuration
 
-Open a terminal in your Git project directory and run the command.
+Create a `.gitsyncrc` file in your user home directory (for global settings) or in your project's root directory (for project-specific settings).
 
-**1. Interactive Mode (default):**
+**Example `.gitsyncrc`:**
+```ini
+[settings]
+# 'en' or 'vi'
+language = vi
+protected_branches = main, master, develop, release
+
+[commit_aliases]
+# alias = full_commit_type
+ref = refactor
+ui = style
+test = test
+```
+
+---
+## Usage
+Open your terminal in any Git repository and run the command.
+
+### Basic Sync
 ```bash
+# Interactive mode, will prompt for a commit message
 git-sync
 ```
-The tool will run `git add .`, then prompt you for a commit message, and finally `git push`.
 
-**2. Using Quick Commit Flags:**
-
+### Quick Commits & Aliases
 ```bash
-# Add a new feature
-git-sync --feat "Add login functionality"
+# Using a standard commit type
+git-sync --feat "Implement user login"
 
-# Fix a bug
-git-sync --fix "Fix UI issue on mobile"
-
-# Update documentation
-git-sync --docs "Update installation guide"
+# Using a custom alias (if 'ui = style' is in .gitsyncrc)
+git-sync --ui "Update button colors"
 ```
 
-**3. Example of Safety Warning:**
-When you are on the `main` branch:
+### Power Features
+```bash
+# Stash uncommitted changes, sync, and pop them back
+git-sync --chore "Refactor config loader" --stash
+
+# Create and push a tag after syncing
+git-sync --feat "Release version 2.0.0" --tag v2.0.0
+
+# Sync current branch, then update 'develop' and return
+git-sync --fix "Hotfix critical bug" --update-after develop
 ```
-🚀 Starting Git sync process...
-   Working on branch: [main]
 
-⚠️  WARNING: You are about to commit directly to the 'main' branch.
-   This action is not recommended. Are you sure you want to continue? (y/n):
-```
----
-## ⚙️ Custom Parameters
-`--feat "MESSAGE"`: Commit with the `feat:` prefix.
-
-`--fix "MESSAGE"`: Commit with the `fix:` prefix.
-
-`--chore "MESSAGE"`: Commit with the `chore:` prefix.
-
-`--refactor "MESSAGE"`: Commit with the `refactor:` prefix.
-
-`--docs "MESSAGE"`: Commit with the `docs:` prefix.
-
-`--style "MESSAGE"`: Commit with the `style:` prefix.
-
-`-h, --help`: Show all available options.
-
-
+### Dangerous Operations
+```bash
+# DANGER: Discard all local changes to match origin/main
+git-sync --force-reset-to origin/main```
 ---
