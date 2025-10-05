@@ -1,3 +1,5 @@
+# Tệp: core/main_flow.py
+
 import sys
 import os
 from .config import t, get_protected_branches
@@ -33,9 +35,11 @@ def get_commit_message(args):
             break
 
     if used_commit_type:
-        commit_prefix = f"{used_commit_type}: "
+        scope = f"({args.scope})" if args.scope else ""
+        commit_prefix = f"{used_commit_type}{scope}: "
         commit_message = getattr(args, used_commit_type)
     else:
+        # Chế độ interactive không thay đổi
         print(t('preparing_commit'))
         commit_message = input(t('commit_prompt'))
 
@@ -97,7 +101,7 @@ def execute_sync(commit_message, args):
         print(t('push_failed'), file=sys.stderr)
     
     sys.exit(1)
-
+    
 def start_sync_flow(args):
     """Hàm chính điều phối toàn bộ luồng đồng bộ."""
     original_branch = get_current_branch()

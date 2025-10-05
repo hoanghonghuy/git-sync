@@ -1,3 +1,5 @@
+# Tệp: git_sync.py
+
 import argparse
 import sys
 
@@ -18,6 +20,12 @@ def main():
     
     parser.add_argument("--set-lang", choices=['en', 'vi'], help="Permanently set the default language in the global config file.")
     
+    parser.add_argument(
+        "-s", "--scope",
+        metavar="SCOPE",
+        help="Specify a scope for the commit (e.g., 'api', 'db', 'ui')."
+    )
+
     parser.add_argument(
         "--force-reset-to", 
         metavar="REMOTE_BRANCH", 
@@ -64,7 +72,6 @@ def main():
         alias_value = getattr(args, alias, None)
         if alias_value:
             setattr(args, target, alias_value)
-            # Không break vì cần getattr để lấy value, không ảnh hưởng logic
     
     # --- Khởi tạo và chạy ứng dụng ---
     try:
