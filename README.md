@@ -12,7 +12,9 @@ A smart, safe, and fast command-line tool to automate your daily `add -> commit 
 *   **Auto Stash**: Use the `--stash` flag to automatically stash uncommitted changes before syncing and pop them after.
 *   **Quick Tagging**: Add and push a Git tag for your releases with the `--tag` flag.
 *   **Multi-Branch Sync**: Keep your main branches updated with the `--update-after` flag.
-*   **Highly Configurable**: Customize protected branches, commit aliases, and language via a `.gitsyncrc` file.
+*   **Non-Interactive & Dry-Run**: Use `-y/--yes` to skip confirmations and `--dry-run` to print Git commands without changing anything.
+*   **Hooks for Safety**: Optional `pre_sync` / `post_sync` hooks let you run tests or checks before/after syncing.
+*   **Highly Configurable**: Customize protected branches, commit aliases, commit types, commit template, auto ticket-from-branch behavior, hooks, and language via a `.gitsyncrc` file.
 *   **Multi-Language**: Supports English and Vietnamese out of the box.
 
 ---
@@ -38,6 +40,21 @@ Create a `.gitsyncrc` file in your user home directory (for global settings) or 
 # 'en' or 'vi'
 language = vi
 protected_branches = main, master, develop, release
+
+# Optional: override default commit types used by the CLI flags
+commit_types = feat, fix, chore, refactor, docs, style, perf, test, ci
+
+# Optional: template for commit messages when using commit-type flags
+# Available placeholders: {type}, {scope}, {message}, {ticket}
+commit_template = [{ticket}] {type}{scope}: {message}
+
+# Optional: automatically extract ticket IDs (e.g. ABC-123) from branch names
+auto_ticket_from_branch = true
+
+[hooks]
+# Optional: run before/after sync (useful for tests, lint, etc.)
+pre_sync = python -m pytest -q
+post_sync = git status -sb
 
 [commit_aliases]
 # alias = full_commit_type
@@ -65,6 +82,15 @@ git-sync --feat "Implement user login"
 git-sync --ui "Update button colors"
 ```
 
+### Non-Interactive & Dry Run
+```bash
+# Skip confirmations on protected branches, commit review, and pull prompts
+git-sync --feat "Implement login API" -s api -y
+
+# See what would happen without changing anything
+git-sync --feat "Check commands" -s api -y --dry-run
+```
+
 ### Power Features
 ```bash
 # Stash uncommitted changes, sync, and pop them back
@@ -80,5 +106,26 @@ git-sync --fix "Hotfix critical bug" --update-after develop
 ### Dangerous Operations
 ```bash
 # DANGER: Discard all local changes to match origin/main
-git-sync --force-reset-to origin/main```
+git-sync --force-reset-to origin/main
+```
+
+---
+## Testing
+
+To run the automated test suite (unit + basic integration tests):
+
+```bash
+pip install pytest
+pytest
+```
+
+For optional static type checking with `mypy`:
+
+```bash
+pip install mypy
+mypy core git_sync.py
+```
+
+The repository also includes a GitHub Actions workflow (`.github/workflows/ci.yml`) that runs `mypy` and `pytest` on pushes and pull requests to `main` / `master`.
+
 ---

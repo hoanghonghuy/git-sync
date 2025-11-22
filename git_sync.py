@@ -3,16 +3,17 @@
 import argparse
 import sys
 
-# Import các hàm từ package 'core'
-from core.config import initialize_lang, get_commit_aliases, set_language_config
-from core.main_flow import start_sync_flow, handle_force_reset
+import core.config as config
+import core.main_flow as main_flow
+from core.constants import COMMIT_TYPES
+from core.git_utils import set_dry_run
 
-def main():
+def main() -> None:
     """Hàm chính của ứng dụng."""
     parser = argparse.ArgumentParser(description="A smart Git sync tool.")
     
     # Đọc alias trước để tự động thêm cờ
-    aliases = get_commit_aliases()
+    aliases = config.get_commit_aliases()
     alias_to_target = {alias: target for alias, target in aliases.items()}
 
     # --- Thiết lập các cờ (flags) ---
@@ -50,9 +51,21 @@ def main():
         help="After a successful sync, switch to this branch, pull, and switch back."
     )
 
+    parser.add_argument(
+        "-y", "--yes",
+        action="store_true",
+        help="Skip interactive confirmations and assume 'yes' for supported prompts."
+    )
+
+    parser.add_argument(
+        "--dry-run",
+        action="store_true",
+        help="Show the Git commands that would be executed, without making any changes."
+    )
+
     commit_group = parser.add_mutually_exclusive_group()
     # Các loại commit chuẩn
-    standard_commits = ["feat", "fix", "chore", "refactor", "docs", "style", "perf", "test"]
+    standard_commits = COMMIT_TYPES
     for commit_type in standard_commits:
         commit_group.add_argument(f"--{commit_type}", metavar="MESSAGE", help=f'Commit with prefix "{commit_type}:"')
     
@@ -67,6 +80,9 @@ def main():
 
     args = parser.parse_args()
 
+    # Thiết lập chế độ dry-run cho toàn bộ phiên làm việc (nếu có)
+    set_dry_run(getattr(args, "dry_run", False))
+
     # --- Chuyển đổi giá trị từ alias sang cờ chuẩn ---
     for alias, target in alias_to_target.items():
         alias_value = getattr(args, alias, None)
@@ -76,21 +92,21 @@ def main():
     # --- Khởi tạo và chạy ứng dụng ---
     try:
         # Luôn phải khởi tạo để có hàm t() cho các thông báo
-        initialize_lang(args)
+        config.initialize_lang(args)
     except Exception as e:
         print(f"Failed to initialize settings: {e}", file=sys.stderr)
         sys.exit(1)
 
     # Ưu tiên xử lý --set-lang và thoát
     if args.set_lang:
-        set_language_config(args.set_lang)
+        config.set_language_config(args.set_lang)
         sys.exit(0)
 
     # Các luồng logic chính
     if args.force_reset_to:
-        handle_force_reset(args.force_reset_to)
+        main_flow.handle_force_reset(args.force_reset_to)
     else:
-        start_sync_flow(args)
+        main_flow.start_sync_flow(args)
 
 if __name__ == "__main__":
     main()

@@ -200,19 +200,31 @@
         "vi": "   ❌ Cập nhật branch '{branch}' thất bại. Vui lòng kiểm tra thủ công."
     },
     "update_branch_success": {
-        "en": "✅ Branch '{branch}' is now up-to-date.",
-        "vi": "✅ Branch '{branch}' đã được cập nhật."
+        "en": " Branch '{branch}' is now up-to-date.",
+        "vi": " Branch '{branch}' đã được cập nhật."
     },
     "review_changes_header": {
-        "en": "\n--- 🔍 Review Changes Before Committing ---",
-        "vi": "\n--- 🔍 Xem Lại Các Thay Đổi Trước Khi Commit ---"
+        "en": "\n ---  Review Changes Before Committing ---",
+        "vi": "\n ---  Xem Lại Các Thay Đổi Trước Khi Commit ---"
     },
     "commit_confirm_prompt": {
         "en": "\n   Do you want to proceed with this commit? (Y/n): ",
         "vi": "\n   Bạn có muốn tiếp tục với commit này không? (Y/n): "
     },
+    "no_changes_to_commit_proceed_pull": {
+        "en": "\n No changes to commit. Pulling latest changes from remote...",
+        "vi": "\n Không có thay đổi để commit. Đang kéo các thay đổi mới nhất từ remote..."
+    },
+    "command_not_found": {
+        "en": "Error: Command '{cmd}' not found. Is Git installed and in your PATH?",
+        "vi": "Lỗi: Không tìm thấy lệnh '{cmd}'. Git đã được cài đặt và thêm vào PATH chưa?"
+    },
+    "unexpected_error": {
+        "en": "An unexpected error occurred: {error}",
+        "vi": "Đã xảy ra lỗi không mong đợi: {error}"
+    },
     "set_lang_success": {
-        "en": "✅ Default language has been set to '{lang}'.",
-        "vi": "✅ Ngôn ngữ mặc định đã được đổi thành '{lang}'."
+        "en": " Default language has been set to '{lang}'.",
+        "vi": " Ngôn ngữ mặc định đã được đổi thành '{lang}'."
     }
 }
